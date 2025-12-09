@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IT Asset Records</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>IT Asset Handover Records</h1>
+
+    <table border="1" width="100%" cellpadding="8">
+        <tr>
+            <th>ID</th>
+            <th>Employee</th>
+            <th>Item</th>
+            <th>Date</th>
+            <th>PDF</th>
+        </tr>
+
+        {% for r in rows %}
+        <tr>
+            <td>{{ r[0] }}</td>
+            <td>{{ r[2] }}</td>
+            <td>{{ r[9] }}</td>
+            <td>{{ r[1] }}</td>
+            <td><a href="/record/{{ r[0] }}/pdf" target="_blank">Download PDF</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</body>
+</html>
