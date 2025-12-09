@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, send_file
 from flask_mail import Mail, Message
