@@ -110,9 +110,11 @@ def asset_form():
 
         msg = Message(
             subject="New IT Asset Handover Form Submitted",
+            sender=os.environ.get("MAIL_DEFAULT_SENDER"),
             recipients=["marwen.khalifa@etonhouse.com.sa"],
             body=body
         )
+
 
         try:
             mail.send(msg)
