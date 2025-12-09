@@ -14,7 +14,10 @@ app.config.from_object(Config)
 
 mail = Mail(app)
 
-# Initialize DB
+
+# ---------------------------
+# Initialize the Database
+# ---------------------------
 def init_db():
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
@@ -43,6 +46,9 @@ def init_db():
 init_db()
 
 
+# ---------------------------
+# Main Form Route
+# ---------------------------
 @app.route("/", methods=["GET", "POST"])
 def asset_form():
     if request.method == "POST":
@@ -73,14 +79,54 @@ def asset_form():
             data.get("condition"),
             data.get("accessories")
         ))
+
         conn.commit()
         conn.close()
+
+        # ---------------------------
+        # Send email notification
+        # ---------------------------
+        body_lines = [
+            "New IT Asset Handover Submission",
+            "",
+            f"Date: {data.get('date')}",
+            f"Employee Name: {data.get('employee_name')}",
+            f"ID / Iqama Number: {data.get('iqama')}",
+            f"Job Title: {data.get('job_title')}",
+            f"Department / Location: {data.get('department')}",
+            "",
+            "Asset Details:",
+            f"- Item Name: {data.get('item_name')}",
+            f"- Model: {data.get('model')}",
+            f"- Serial: {data.get('serial')}",
+            f"- Color: {data.get('color')}",
+            f"- Condition: {data.get('condition')}",
+            f"- Accessories: {data.get('accessories')}",
+            "",
+            f"Notes: {data.get('notes')}"
+        ]
+
+        body = "\n".join(body_lines)
+
+        msg = Message(
+            subject="New IT Asset Handover Form Submitted",
+            recipients=["marwen.khalifa@etonhouse.com.sa"],
+            body=body
+        )
+
+        try:
+            mail.send(msg)
+        except Exception as e:
+            print("Email send error:", e)
 
         return render_template("submitted.html")
 
     return render_template("form.html")
 
 
+# ---------------------------
+# Records Dashboard
+# ---------------------------
 @app.route("/records")
 def records():
     conn = sqlite3.connect("database.db")
@@ -91,6 +137,9 @@ def records():
     return render_template("records.html", rows=rows)
 
 
+# ---------------------------
+# PDF Generator
+# ---------------------------
 @app.route("/record/<int:record_id>/pdf")
 def generate_pdf(record_id):
     conn = sqlite3.connect("database.db")
@@ -103,6 +152,7 @@ def generate_pdf(record_id):
     pdf = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
+    # Header
     pdf.setFont("Helvetica-Bold", 16)
     pdf.drawString(2 * cm, height - 2 * cm, "IT Asset Handover Form")
 
@@ -110,6 +160,7 @@ def generate_pdf(record_id):
     pdf.drawString(2 * cm, height - 2.8 * cm, f"Record ID: {r[0]}")
     pdf.drawString(2 * cm, height - 3.4 * cm, f"Date: {r[1]}")
 
+    # Employee Information
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(2 * cm, height - 4.4 * cm, "Employee Information")
 
@@ -131,6 +182,7 @@ def generate_pdf(record_id):
     table.wrapOn(pdf, width, height)
     table.drawOn(pdf, 2 * cm, height - 12 * cm)
 
+    # Asset Information
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(2 * cm, height - 13 * cm, "Asset Information")
 
@@ -151,21 +203,23 @@ def generate_pdf(record_id):
     table2.wrapOn(pdf, width, height)
     table2.drawOn(pdf, 2 * cm, height - 21 * cm)
 
+    # Acknowledgment
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(2 * cm, height - 22 * cm, "Employee Acknowledgment")
 
     text = pdf.beginText(2 * cm, height - 23 * cm)
     text.setFont("Helvetica", 10)
-    ack = (
+    acknowledgment = (
         "I acknowledge receiving the above IT asset(s) in good working condition.\n"
-        "I agree to safeguard the equipment, use it only for work purposes, and return it "
-        "upon request or when leaving the organization.\n\n"
+        "I agree to safeguard the equipment, use it only for work purposes, and return it upon request "
+        "or when leaving the organization.\n\n"
         "In case of loss, misuse, or damage caused by negligence, I accept full responsibility."
     )
-    for line in ack.split("\n"):
+    for line in acknowledgment.split("\n"):
         text.textLine(line)
     pdf.drawText(text)
 
+    # Signature placeholders
     pdf.drawString(2 * cm, height - 27 * cm, "Employee Signature: ____________________________")
     pdf.drawString(2 * cm, height - 28 * cm, "IT Department: ________________________________")
 
