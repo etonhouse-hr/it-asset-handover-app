@@ -6,12 +6,12 @@ services:
     startCommand: "gunicorn app:app"
     envVars:
       - key: SECRET_KEY
-        value: "change_me"
+        value: "MarwenSuperSecret2025"
       - key: MAIL_SERVER
         value: "smtp.office365.com"
       - key: MAIL_PORT
         value: "587"
-      - key: MAIL_USERNAME
+      - key: marwen.khalifa@etonhouse.com.sa
         sync: false
       - key: MAIL_PASSWORD
         sync: false
