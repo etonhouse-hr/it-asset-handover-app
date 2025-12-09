@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IT Asset Handover Form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>IT Asset Handover / Receipt Form</h1>
+
+    <form method="POST">
+
+        <label>Date</label>
+        <input type="date" name="date" required>
+
+        <label>Employee Name</label>
+        <input type="text" name="employee_name" required>
+
+        <label>ID / Iqama Number</label>
+        <input type="text" name="iqama" required>
+
+        <label>Job Title</label>
+        <input type="text" name="job_title">
+
+        <label>Department / Location</label>
+        <input type="text" name="department">
+
+        <label>Asset Receipt Date</label>
+        <input type="date" name="asset_receipt_date">
+
+        <label>Expected Return Date</label>
+        <input type="date" name="return_date">
+
+        <label>Notes</label>
+        <textarea name="notes"></textarea>
+
+        <h2>Asset Details</h2>
+
+        <label>Item Name</label>
+        <input type="text" name="item_name" required>
+
+        <label>Model</label>
+        <input type="text" name="model">
+
+        <label>Serial Number</label>
+        <input type="text" name="serial">
+
+        <label>Color</label>
+        <input type="text" name="color">
+
+        <label>Condition</label>
+        <input type="text" name="condition">
+
+        <label>Accessories</label>
+        <textarea name="accessories"></textarea>
+
+        <button class="btn">Submit</button>
+
+    </form>
+</div>
+
+</body>
+</html>
